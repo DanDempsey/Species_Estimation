@@ -106,7 +106,7 @@ time_taken <- function( x ) {
 ### Fit the data via ABC
 run_ABC <- function( dat, param_list, metric = 'm', p = 2, pilot_iterations, 
                      fit_iterations, fixed_run = TRUE, hyperprior_run = FALSE,
-                     n_cores = detectCores() - 1 ) {
+                     x_weight = 1, t_weight = 1, n_cores = detectCores() - 1 ) {
   
   # Extract parameters
   x <- dat$x
@@ -127,7 +127,7 @@ run_ABC <- function( dat, param_list, metric = 'm', p = 2, pilot_iterations,
     tic()
     pilot_run <- CD_ABC( x = x, t = t, theta_N = theta_N, theta_x = theta_x, theta_l = theta_l, 
                          m = m, iters = pilot_iterations, epsilon = Inf, metric = metric, p = p,
-                         cores = n_cores )
+                         x_weight = x_weight, t_weight = t_weight, cores = n_cores )
     pilot_speed <- toc( quiet = TRUE )
     cat( paste0('Pilot: ', time_taken(pilot_speed), ' seconds.\n') )
     
@@ -236,7 +236,7 @@ output_function <- function( res, dat, suffix_file, suffix_graph, z ) {
 
 analysis_function <- function( z, synonym_list, param_list, metric = 'm', p = 2,
                                pilot_iterations, fit_iterations, fixed_run = TRUE,
-                               hyperprior_run = FALSE, 
+                               hyperprior_run = FALSE, x_weight = 1, t_weight = 1,
                                n_cores = detectCores() - 1, wd = getwd() ) {
   
   taxa_data <- read_taxa( paste0(z, '_20240815.zip') )
@@ -248,7 +248,7 @@ analysis_function <- function( z, synonym_list, param_list, metric = 'm', p = 2,
                   pilot_iterations = pilot_iterations, 
                   fit_iterations = fit_iterations, 
                   fixed_run = fixed_run, hyperprior_run = hyperprior_run, 
-                  n_cores = n_cores )
+                  x_weight = x_weight, t_weight = t_weight, n_cores = n_cores )
   
   default_wd <- getwd( )
   if ( !dir.exists(wd) ) { dir.create( wd ) }

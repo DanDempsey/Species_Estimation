@@ -58,8 +58,11 @@ void revsort(double *a, int *ib, int n)
 // Reservoir WRS Permutation
 void ReservoirWRS( double *w, int C, int D, double *N_trunc ) {
   
-  double u, R[C];
-  int i, ord[C]; 
+  double u, *R;
+  int i, *ord; 
+  
+  R = (double*) malloc(C * sizeof(double));
+  ord = (int*) malloc(C * sizeof(int));
   
   // Calculate first D keys
   for ( i = 0; i < C; i++ ) {
@@ -74,6 +77,9 @@ void ReservoirWRS( double *w, int C, int D, double *N_trunc ) {
   for ( i = 0; i < D; i++ ) {
     N_trunc[i] = w[ord[i]];
   }
+  
+  free( R );
+  free( ord );
   
 }
 
@@ -128,10 +134,10 @@ void C_ABC_Iteration( int *x, int *t, int *x_hat, int *t_hat, double *theta_x, d
   
   double x_dist;
   if( *dist_met == 1 ) {
-    x_dist = minkowski_distance( x, x_hat, *Tau, *p );
+    x_dist = *x_weight * minkowski_distance( x, x_hat, *Tau, *p );
   }
   else {
-    x_dist = canberra_distance( x, x_hat, *Tau );
+    x_dist = *x_weight * canberra_distance( x, x_hat, *Tau );
   }
   
   // First filter
@@ -193,14 +199,14 @@ void C_ABC_Iteration( int *x, int *t, int *x_hat, int *t_hat, double *theta_x, d
   
   double t_dist;
   if( *dist_met == 1 ) {
-    t_dist = minkowski_distance( t, t_hat, *Tau, *p );
+    t_dist = *t_weight * minkowski_distance( t, t_hat, *Tau, *p );
   }
   else {
-    t_dist = canberra_distance( t, t_hat, *Tau );
+    t_dist = *t_weight * canberra_distance( t, t_hat, *Tau );
   }
   
   // Second filter
-  *distance = (*x_weight * x_dist) + (*t_weight * t_dist);
+  *distance = x_dist + t_dist;
   if( *distance < *epsilon ) {
     *accept = 1;
   }

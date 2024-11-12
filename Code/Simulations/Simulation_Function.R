@@ -22,7 +22,7 @@ sim_dat <- function( C, theta_N, theta_l, theta_x, Tau, graph = FALSE ) {
   }
   
   # Class abundance N
-  N <- rlnorm( C, theta_N[1], theta_N[2] ) %>% sort( decreasing = TRUE )
+  N <- rlnorm( C, theta_N[1], theta_N[2] )
   N_inds <- sample( 1:C, C, prob = N )
   N <- N[N_inds]
   N_sum_prop <- cumsum( N[1:(C-1)] ) / sum( N )
@@ -34,7 +34,7 @@ sim_dat <- function( C, theta_N, theta_l, theta_x, Tau, graph = FALSE ) {
   
   # Sample size n
   n <- rpois( Tau, exp(L) )
-  n_sum <- cumsum( as.numeric(n) )
+  n_sum <- cumsum( n )
   
   # Simulate observed data x and t
   x <- rpois( Tau, exp(L - theta_x) )
